@@ -2,7 +2,9 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
-export default function Members(){
+import { getMarkdown } from 'lib/markdown'
+
+export default function Members({ markdown }){
     const router = useRouter()
     const { data: session, status} = useSession()
     const loading = status === 'loading'
@@ -29,6 +31,20 @@ export default function Members(){
                 <p className="mt-10">Thank you for being a member</p>
                 <p className="mt-10">You now have access to:</p>
             </div>
+            <div
+                className="markdown"
+                dangerouslySetInnerHTML={{ __html: markdown }}
+            />
         </>
     )
+}
+
+export async function getServerSideProps(context) {
+    const markdown = await getMarkdown()
+
+    return {
+        props: {
+            markdown,
+        },
+    }
 }
